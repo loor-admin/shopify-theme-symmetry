@@ -1,0 +1,24 @@
+# Local credentials and CLI state
+.env
+.env.*
+!.env.example
+.shopify/
+shopify.theme.toml
+*.pem
+*.key
+# Dependencies and generated diagnostics (theme assets ARE committed)
+node_modules/
+coverage/
+reports/
+tmp/
+.cache/
+*.log
+*.tmp
+*.swp
+*.zip
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+# config/settings_data.json and all templates/section groups intentionally tracked.

@@ -1,0 +1,27 @@
+{% liquid
+  assign selected = product.selected_or_first_available_variant
+  assign form_id = 'ProductForm-' | append: context_id
+%}
+<product-form>
+{% form 'product', product, id: form_id, data-cart-add: '' %}
+  <label for="Variant-{{ context_id }}">{{ 'products.variant' | t }}</label>
+  <select id="Variant-{{ context_id }}" name="id">
+    {% for variant in product.variants %}
+      <option value="{{ variant.id }}" data-min="{{ variant.quantity_rule.min }}" data-step="{{ variant.quantity_rule.increment }}" data-max="{{ variant.quantity_rule.max }}" {% if variant.id == selected.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+        {{ variant.title | escape }} — {{ variant.price | money_with_currency }}{% unless variant.available %} — {{ 'products.sold_out' | t }}{% endunless %}
+      </option>
+    {% endfor %}
+  </select>
+  <label for="Quantity-{{ context_id }}">{{ 'cart.quantity' | t }}</label>
+  <input id="Quantity-{{ context_id }}" type="number" name="quantity" min="{{ selected.quantity_rule.min }}" step="{{ selected.quantity_rule.increment }}" {% if selected.quantity_rule.max %}max="{{ selected.quantity_rule.max }}"{% endif %} value="{{ selected.quantity_rule.min }}" required>
+  {% if product.selling_plan_groups != empty %}
+    <label for="Plan-{{ context_id }}">{{ 'products.purchase_option' | t }}</label>
+    <select id="Plan-{{ context_id }}" name="selling_plan">
+      {% unless product.requires_selling_plan %}<option value="">{{ 'products.one_time' | t }}</option>{% endunless %}
+      {% for group in product.selling_plan_groups %}{% for plan in group.selling_plans %}<option value="{{ plan.id }}">{{ plan.name | escape }}</option>{% endfor %}{% endfor %}
+    </select>
+  {% endif %}
+  <button class="button" type="submit" {% unless product.available %}disabled{% endunless %}>{{ 'products.add_to_cart' | t }}</button>
+  <p data-form-error class="error" role="alert">{{ form.errors | default_errors }}</p>
+{% endform %}
+</product-form>

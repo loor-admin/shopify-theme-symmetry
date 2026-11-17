@@ -1,0 +1,13 @@
+{% style %}
+  {{ settings.heading_font | font_face: font_display: 'swap' }}
+  {{ settings.body_font | font_face: font_display: 'swap' }}
+  :root {
+    --font-heading: {{ settings.heading_font.family }}, {{ settings.heading_font.fallback_families }};
+    --font-body: {{ settings.body_font.family }}, {{ settings.body_font.fallback_families }};
+    --heading-weight: {{ settings.heading_font.weight }};
+    --body-weight: {{ settings.body_font.weight }};
+    --background: {{ settings.background }};
+    --ink: {{ settings.text }};
+    --accent: {{ settings.accent }};
+  }
+{% endstyle %}

@@ -1,0 +1,15 @@
+[
+  {"name":"theme_info","theme_name":"LOOR Editorial","theme_version":"0.1.0","theme_author":"LOOR","theme_documentation_url":"https://shopify.dev/docs/storefronts/themes","theme_support_url":"https://help.shopify.com"},
+  {"name":"Design tokens","settings":[
+    {"type":"font_picker","id":"heading_font","label":"Heading font","default":"libre_baskerville_n4"},
+    {"type":"font_picker","id":"body_font","label":"Body font","default":"assistant_n4"},
+    {"type":"color","id":"background","label":"Background","default":"#F9F6F0"},
+    {"type":"color","id":"text","label":"Text","default":"#1A1A1A"},
+    {"type":"color","id":"accent","label":"Accent","default":"#89432F"}
+  ]},
+  {"name":"Merchandising","settings":[
+    {"type":"range","id":"low_stock_threshold","label":"Low-stock threshold","min":1,"max":20,"step":1,"default":5},
+    {"type":"textarea","id":"shipping_thresholds","label":"Free-shipping thresholds by currency","info":"One CURRENCY:amount per line, e.g. USD:100. Amounts use storefront currency units. Leave blank to hide; match your actual shipping rules."},
+    {"type":"product_list","id":"cart_upsells","label":"Cart recommendations","limit":3}
+  ]}
+]

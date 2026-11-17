@@ -1,0 +1,26 @@
+<hero-slider class="hero" aria-label="{{ section.settings.label | escape }}">
+  {% for block in section.blocks %}
+    {% liquid
+      assign image_loading = 'lazy'
+      assign priority = 'auto'
+      if forloop.first and section.index == 1
+        assign image_loading = 'eager'
+        assign priority = 'high'
+      endif
+    %}
+    <article class="split" data-slide data-block-id="{{ block.id }}" {% unless forloop.first %}hidden{% endunless %} {{ block.shopify_attributes }}>
+      <div class="split-media">{% if block.settings.image %}{{ block.settings.image | image_url: width: 1800 | image_tag: widths: '360,540,750,1000,1400,1800', sizes: '(min-width: 900px) 50vw, 100vw', loading: image_loading, fetchpriority: priority }}{% else %}{{ 'lifestyle-1' | placeholder_svg_tag }}{% endif %}</div>
+      <div class="split-copy">
+        {% if forloop.first and section.index == 1 %}<h1>{{ block.settings.heading | escape }}</h1>{% else %}<h2 class="heading-xl">{{ block.settings.heading | escape }}</h2>{% endif %}
+        <div>{{ block.settings.text }}</div>
+        {% if block.settings.link %}<a class="button" href="{{ block.settings.link }}">{{ block.settings.cta | escape }}</a>{% endif %}
+      </div>
+    </article>
+  {% endfor %}
+  {% if section.blocks.size > 1 %}
+    <div class="hero-controls" data-slider-controls hidden>{% for block in section.blocks %}<button type="button" data-slide-to="{{ forloop.index0 }}" aria-label="{{ 'general.slide' | t: number: forloop.index }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ forloop.index }}</button>{% endfor %}</div>
+  {% endif %}
+</hero-slider>
+{% schema %}
+{"name":"Split hero slider","max_blocks":5,"settings":[{"type":"text","id":"label","label":"Accessible label","default":"Featured stories"}],"blocks":[{"type":"slide","name":"Slide","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"text","id":"heading","label":"Heading","default":"Made for your everyday"},{"type":"richtext","id":"text","label":"Text","default":"<p>A fresh perspective on familiar things.</p>"},{"type":"text","id":"cta","label":"Button label","default":"Explore"},{"type":"url","id":"link","label":"Link"}]}],"presets":[{"name":"Split hero slider","blocks":[{"type":"slide"}]}]}
+{% endschema %}

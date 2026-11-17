@@ -1,0 +1,8 @@
+<footer class="site-footer"><div class="container">
+  <h2>{{ shop.name | escape }}</h2>
+  <nav aria-label="{{ 'general.footer' | t }}">{% for link in section.settings.menu.links %}<p><a href="{{ link.url }}">{{ link.title | escape }}</a></p>{% endfor %}</nav>
+  <small>© {{ 'now' | date: '%Y' }} {{ shop.name | escape }}. {{ powered_by_link }}</small>
+</div></footer>
+{% schema %}
+{"name":"Footer","enabled_on":{"groups":["footer"]},"settings":[{"type":"link_list","id":"menu","label":"Footer menu","default":"footer"}],"presets":[{"name":"Footer"}]}
+{% endschema %}

@@ -1,0 +1,55 @@
+<cart-drawer data-section="{{ section.id }}" data-error="{{ 'cart.error' | t | escape }}" data-refresh-error="{{ 'cart.refresh_error' | t | escape }}" data-updated="{{ 'cart.updated' | t | escape }}">
+  <dialog class="drawer" aria-labelledby="CartHeading">
+    <div class="drawer-heading"><h2 id="CartHeading">{{ 'cart.title' | t }}</h2><button type="button" data-close aria-label="{{ 'general.close' | t }}">×</button></div>
+    <p data-cart-error class="error" role="alert"></p>
+    <p><a href="{{ routes.cart_url }}">{{ 'cart.view' | t }}</a></p>
+    <p data-cart-status class="visually-hidden" role="status" aria-live="polite"></p>
+    <div data-cart-content>
+      <span hidden data-item-count="{{ cart.item_count }}"></span>
+      {% render 'shipping-progress' %}
+      {% if cart.empty? %}<p>{{ 'cart.empty' | t }}</p>{% endif %}
+      {% for item in cart.items %}
+        <div class="cart-item">
+          <a href="{{ item.url }}">{% if item.image %}{{ item.image | image_url: width: 240 | image_tag: widths: '80,160,240', sizes: '80px', loading: 'lazy' }}{% endif %}</a>
+          <div>
+            <a href="{{ item.url }}">{{ item.product.title | escape }}</a>
+            {% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}
+            {% if item.selling_plan_allocation %}<p>{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>{% endif %}
+            {% for property in item.properties %}{% assign first_letter = property.first | slice: 0 %}{% if property.last != blank and first_letter != '_' %}<p>{{ property.first | escape }}: {{ property.last | escape }}</p>{% endif %}{% endfor %}
+            <p>{% if item.original_line_price > item.final_line_price %}<s>{{ item.original_line_price | money }}</s> {% endif %}{{ item.final_line_price | money_with_currency }}</p>
+            {% for discount in item.line_level_discount_allocations %}<p>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</p>{% endfor %}
+            <form action="{{ routes.cart_change_url }}" method="post" data-line-form data-key="{{ item.key | escape }}">
+              <input type="hidden" name="id" value="{{ item.key | escape }}">
+              <label for="DrawerQty-{{ forloop.index }}">{{ 'cart.quantity' | t }}</label>
+              <input id="DrawerQty-{{ forloop.index }}" name="quantity" type="number" min="{{ item.variant.quantity_rule.min }}" step="{{ item.variant.quantity_rule.increment }}" {% if item.variant.quantity_rule.max %}max="{{ item.variant.quantity_rule.max }}"{% endif %} value="{{ item.quantity }}">
+              <button type="submit">{{ 'cart.update' | t }}</button>
+              <button type="submit" name="remove" value="1">{{ 'cart.remove' | t }}</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+      {% for discount in cart.cart_level_discount_applications %}<p>{{ discount.title | escape }}: −{{ discount.total_allocated_amount | money }}</p>{% endfor %}
+      <p>{{ 'cart.subtotal' | t }}: {{ cart.total_price | money_with_currency }}</p>
+      <p>{{ 'cart.shipping_note' | t }}</p>
+      <a class="button button--secondary" href="{{ routes.cart_url }}">{{ 'cart.view' | t }}</a>
+      {% unless cart.empty? %}<form action="{{ routes.cart_url }}" method="post"><button class="button" name="checkout" type="submit">{{ 'cart.checkout' | t }}</button></form>{% endunless %}
+      {% if settings.cart_upsells != blank %}
+        <h3>{{ 'cart.pair_with' | t }}</h3>
+        {% for upsell in settings.cart_upsells %}
+          {% liquid
+            assign in_cart = false
+            for item in cart.items
+              if item.product_id == upsell.id
+                assign in_cart = true
+              endif
+            endfor
+          %}
+          {% if in_cart == false and upsell.available %}{% render 'product-card', card_product: upsell, ratio: 'square', card_context: 'drawer' %}{% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </dialog>
+</cart-drawer>
+{% schema %}
+{"name":"Cart drawer","settings":[]}
+{% endschema %}

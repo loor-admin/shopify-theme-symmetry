@@ -1,0 +1,29 @@
+
+> loor-editorial-theme@0.1.0 check
+> npm run check:structure && npm run check:cart && npm run check:theme
+
+
+> loor-editorial-theme@0.1.0 check:structure
+> node scripts/validate.mjs
+
+Validated 14 JSON files, 14 section schemas, template references, and JavaScript syntax.
+
+> loor-editorial-theme@0.1.0 check:cart
+> node --test scripts/cart.test.mjs
+
+✔ cart requests preserve localized routes and line keys (13.463ms)
+✔ 422 inventory messages propagate to the caller (0.3778ms)
+✔ mutations serialize and a rejected mutation does not stall the queue (0.4898ms)
+✔ null rendered sections cause one GET, never another cart mutation (0.2202ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.82
+
+> loor-editorial-theme@0.1.0 check:theme
+> shopify theme check --fail-level warning
+

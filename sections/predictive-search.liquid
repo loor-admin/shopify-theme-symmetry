@@ -1,0 +1,10 @@
+{% if predictive_search.performed %}
+  <div data-predictive-results>
+    <ul class="search-results">
+      {% for product in predictive_search.resources.products %}<li><a href="{{ product.url }}">{{ product.title | escape }} — {{ product.price | money_with_currency }}</a></li>{% else %}<li>{{ 'products.none' | t }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% schema %}
+{"name":"Predictive search results","settings":[]}
+{% endschema %}

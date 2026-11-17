@@ -1,0 +1,11 @@
+{% comment %}Accepts price_product or variant as price_item; no inferred first-variant pricing.{% endcomment %}
+{% liquid
+  assign item = price_item | default: price_product
+  assign compare = item.compare_at_price
+%}
+<span class="price">
+  {% if price_product.price_varies and price_item == blank %}<span>{{ 'products.from' | t }}</span>{% endif %}
+  <span>{{ item.price | money_with_currency }}</span>
+  {% if compare > item.price %}<s><span class="visually-hidden">{{ 'products.regular_price' | t }} </span>{{ compare | money_with_currency }}</s>{% endif %}
+  {% if item.unit_price_measurement %}<span>{{ item.unit_price | money }} / {% if item.unit_price_measurement.reference_value != 1 %}{{ item.unit_price_measurement.reference_value }}{% endif %}{{ item.unit_price_measurement.reference_unit }}</span>{% endif %}
+</span>

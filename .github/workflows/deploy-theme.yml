@@ -1,0 +1,53 @@
+name: Validate and deploy staging theme
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: shopify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Push code to the existing unpublished staging theme
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+          SHOPIFY_STORE: ${{ vars.SHOPIFY_STORE }}
+          SHOPIFY_THEME_ID: ${{ vars.SHOPIFY_THEME_ID }}
+          SHOPIFY_CLI_NO_ANALYTICS: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SHOPIFY_CLI_THEME_TOKEN"
+          [[ "$SHOPIFY_STORE" =~ ^[a-zA-Z0-9-]+\.myshopify\.com$ ]]
+          [[ "$SHOPIFY_THEME_ID" =~ ^[0-9]+$ ]]
+          npx --no-install shopify theme push \
+            --store "$SHOPIFY_STORE" \
+            --theme "$SHOPIFY_THEME_ID" \
+            --ignore config/settings_data.json \
+            --ignore 'templates/*.json' \
+            --ignore 'sections/*-group.json' \
+            --no-input

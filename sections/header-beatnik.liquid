@@ -1,0 +1,95 @@
+<beatnik-header data-sticky="{{ section.settings.sticky }}" class="header--{{ section.settings.alignment }}">
+  {% if section.settings.announcement != blank %}
+    <p class="announcement">{% if section.settings.announcement_link != blank %}<a href="{{ section.settings.announcement_link }}">{% endif %}{{ section.settings.announcement | escape }}{% if section.settings.announcement_link != blank %}</a>{% endif %}</p>
+  {% endif %}
+  <header class="container header-row">
+    <a class="brand" href="{{ routes.root_url }}" style="--logo-width: {{ section.settings.logo_width }}px">
+      {% if section.settings.logo != blank %}
+        {{ section.settings.logo | image_url: width: 480 | image_tag: widths: '120,160,240,320,480', sizes: '160px', loading: 'eager', alt: shop.name }}
+      {% else %}{{ shop.name | escape }}{% endif %}
+    </a>
+    <button class="mobile-toggle button button--secondary" type="button" data-menu-toggle aria-controls="Navigation-{{ section.id }}" aria-expanded="false">{{ 'general.menu' | t }}</button>
+    <nav class="header-nav" id="Navigation-{{ section.id }}" aria-label="{{ 'general.navigation' | t }}">
+      <ul>
+        {% for link in section.settings.menu.links %}
+          {% liquid
+            assign has_promos = false
+            assign link_key = link.title | handleize
+            for block in section.blocks
+              assign block_key = block.settings.menu_label | handleize
+              if block_key == link_key
+                assign has_promos = true
+              endif
+            endfor
+          %}
+          <li>
+            {% if link.links != blank or has_promos %}
+              <details>
+                <summary>{{ link.title | escape }}</summary>
+                <div class="mega-panel">
+                  <div><a href="{{ link.url }}">{{ 'general.explore' | t }} {{ link.title | escape }}</a></div>
+                  {% for child in link.links %}
+                    <div>
+                      <a href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}><strong>{{ child.title | escape }}</strong></a>
+                      <ul>{% for grandchild in child.links %}<li><a href="{{ grandchild.url }}" {% if grandchild.current %}aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>{% endfor %}</ul>
+                    </div>
+                  {% endfor %}
+                  {% for block in section.blocks %}
+                    {% assign block_key = block.settings.menu_label | handleize %}
+                    {% if block_key == link_key %}
+                      <div data-promo {{ block.shopify_attributes }}>
+                        {% if block.type == 'mega_menu' %}
+                          <h3>{{ block.settings.heading | escape }}</h3>
+                          <ul>{% for promo_link in block.settings.menu.links %}<li><a href="{{ promo_link.url }}">{{ promo_link.title | escape }}</a></li>{% endfor %}</ul>
+                        {% else %}
+                          {% if block.settings.image != blank %}{{ block.settings.image | image_url: width: 800 | image_tag: widths: '240,400,600,800', sizes: '(min-width: 900px) 22vw, 44vw', loading: 'lazy' }}{% endif %}
+                          <h3>{{ block.settings.heading | escape }}</h3>
+                          {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{{ block.settings.cta | escape }}</a>{% endif %}
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </details>
+            {% else %}<a href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a href="{{ routes.search_url }}">{{ 'general.search' | t }}</a>
+      {% if shop.customer_accounts_enabled %}<a href="{{ routes.account_url }}">{{ 'general.account' | t }}</a>{% endif %}
+      <a href="{{ routes.cart_url }}" data-open-cart>{{ 'cart.title' | t }} (<span data-cart-count>{{ cart.item_count }}</span>)</a>
+    </div>
+  </header>
+</beatnik-header>
+{% schema %}
+{
+  "name": "Editorial header", "tag": "section", "class": "header-section", "limit": 1,
+  "enabled_on": {"groups": ["header"]},
+  "settings": [
+    {"type":"image_picker","id":"logo","label":"Logo"},
+    {"type":"range","id":"logo_width","label":"Logo width","min":80,"max":240,"step":10,"unit":"px","default":160},
+    {"type":"link_list","id":"menu","label":"Main menu","default":"main-menu"},
+    {"type":"select","id":"alignment","label":"Navigation alignment","options":[{"value":"center","label":"Centered"},{"value":"left","label":"Left"}],"default":"center"},
+    {"type":"checkbox","id":"sticky","label":"Reveal on scroll up","default":true},
+    {"type":"text","id":"announcement","label":"Announcement","default":"Considered pieces. Everyday stories."},
+    {"type":"url","id":"announcement_link","label":"Announcement link"}
+  ],
+  "blocks": [
+    {"type":"mega_menu","name":"Extra menu column","limit":6,"settings":[
+      {"type":"text","id":"menu_label","label":"Matching top-level menu title","default":"Shop"},
+      {"type":"text","id":"heading","label":"Heading","default":"Discover"},
+      {"type":"link_list","id":"menu","label":"Column menu"}
+    ]},
+    {"type":"promo","name":"Visual promo","limit":6,"settings":[
+      {"type":"text","id":"menu_label","label":"Matching top-level menu title","default":"Shop"},
+      {"type":"image_picker","id":"image","label":"Image"},
+      {"type":"text","id":"heading","label":"Heading","default":"The new edit"},
+      {"type":"text","id":"cta","label":"Link label","default":"Explore the collection"},
+      {"type":"url","id":"link","label":"Link"}
+    ]}
+  ],
+  "presets":[{"name":"Editorial header"}]
+}
+{% endschema %}

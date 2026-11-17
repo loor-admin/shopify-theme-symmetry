@@ -1,0 +1,25 @@
+{% comment %}Thresholds are explicit per presentment currency; never convert a shop-currency amount by guesswork.{% endcomment %}
+{% liquid
+  assign threshold = 0
+  assign currency = cart.currency.iso_code
+  assign rows = settings.shipping_thresholds | newline_to_br | split: '<br />'
+  for row in rows
+    assign pair = row | strip | split: ':'
+    assign code = pair[0] | strip | upcase
+    if code == currency
+      assign threshold = pair[1] | strip | times: 100 | round
+    endif
+  endfor
+  assign progress = 0
+  if threshold > 0
+    assign progress = cart.total_price | times: 100.0 | divided_by: threshold | at_most: 100
+  endif
+  assign remaining = threshold | minus: cart.total_price | money_with_currency
+%}
+{% if threshold > 0 %}
+  <div>
+    <label for="ShippingProgress">{% if cart.total_price >= threshold %}{{ 'cart.shipping_reached' | t }}{% else %}{{ 'cart.shipping_remaining' | t: amount: remaining }}{% endif %}</label>
+    <progress id="ShippingProgress" max="100" value="{{ progress }}">{{ progress | round }}%</progress>
+    <p>{{ 'cart.shipping_estimate' | t }}</p>
+  </div>
+{% endif %}

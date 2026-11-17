@@ -1,0 +1,44 @@
+{% comment %}Inputs: card_product, ratio ('portrait'|'square'), eager (only first visible row), card_context.{% endcomment %}
+{% liquid
+  assign chosen = card_product.selected_or_first_available_variant
+  assign card_ratio = '3/4'
+  if ratio == 'square'
+    assign card_ratio = '1/1'
+  endif
+  assign image_loading = 'lazy'
+  if eager
+    assign image_loading = 'eager'
+  endif
+%}
+<product-card style="--card-ratio: {{ card_ratio }}">
+  <a class="card-media" href="{{ card_product.url }}" aria-label="{{ card_product.title | escape }}" data-product-link>
+    {% if card_product.featured_image %}
+      {{ card_product.featured_image | image_url: width: 1000 | image_tag: widths: '240,360,480,720,1000', sizes: '(min-width: 1440px) 330px, (min-width: 900px) 23vw, 46vw', loading: image_loading, class: 'card-primary' }}
+      {% if card_product.images[1] %}{{ card_product.images[1] | image_url: width: 1000 | image_tag: widths: '240,360,480,720,1000', sizes: '(min-width: 1440px) 330px, (min-width: 900px) 23vw, 46vw', loading: 'lazy', class: 'card-secondary', alt: '' }}{% endif %}
+    {% else %}{{ 'product-1' | placeholder_svg_tag }}{% endif %}
+    <span class="card-badges">
+      {% if card_product.compare_at_price > card_product.price %}
+        <span class="badge">{{ 'products.sale' | t }}{% unless card_product.price_varies or card_product.compare_at_price_varies %} −{{ card_product.compare_at_price | minus: card_product.price | times: 100.0 | divided_by: card_product.compare_at_price | round }}%{% endunless %}</span>
+      {% endif %}
+      {% if card_product.available == false %}<span class="badge">{{ 'products.sold_out' | t }}</span>
+      {% elsif chosen.inventory_management != blank and chosen.inventory_quantity <= 0 and chosen.inventory_policy == 'continue' %}<span class="badge">{{ 'products.preorder' | t }}</span>
+      {% elsif card_product.has_only_default_variant and chosen.inventory_management != blank and chosen.inventory_quantity > 0 and chosen.inventory_quantity <= settings.low_stock_threshold %}<span class="badge">{{ 'products.low_stock' | t }}</span>{% endif %}
+    </span>
+  </a>
+  <h3 class="card-title"><a href="{{ card_product.url }}" data-product-link>{{ card_product.title | escape }}</a></h3>
+  {% render 'price', price_product: card_product %}
+  {% render 'swatches', swatch_product: card_product %}
+  {% if card_product.available %}
+    {% if card_product.has_only_default_variant and card_product.selling_plan_groups == empty %}
+      {% assign card_form_id = 'CardForm-' | append: card_context | append: '-' | append: card_product.id %}
+      {% form 'product', card_product, id: card_form_id, data-cart-add: '' %}
+        <input type="hidden" name="id" value="{{ chosen.id }}">
+        <input type="hidden" name="quantity" value="{{ chosen.quantity_rule.min }}">
+        <button type="submit" class="button">{{ 'products.quick_add' | t }}</button>
+        <p data-form-error role="alert"></p>
+      {% endform %}
+    {% else %}
+      <a class="button button--secondary" href="{{ card_product.url }}" data-quick-buy>{{ 'products.choose_options' | t }}</a>
+    {% endif %}
+  {% endif %}
+</product-card>

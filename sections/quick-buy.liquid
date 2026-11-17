@@ -1,0 +1,9 @@
+<div data-quick-product>
+  <h3>{{ product.title | escape }}</h3>
+  {% render 'price', price_product: product %}
+  {% render 'product-form', product: product, context_id: 'quick-buy' %}
+  <a href="{{ product.url }}">{{ 'products.details' | t }}</a>
+</div>
+{% schema %}
+{"name":"Quick buy","settings":[]}
+{% endschema %}

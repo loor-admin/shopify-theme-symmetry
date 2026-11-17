@@ -1,0 +1,25 @@
+{% for option in swatch_product.options_with_values %}
+  {% liquid
+    assign has_swatches = false
+    for value in option.values
+      if value.swatch != blank
+        assign has_swatches = true
+      endif
+    endfor
+  %}
+  {% if has_swatches %}
+    <div class="swatches" role="group" aria-label="{{ option.name | escape }}">
+      {% for value in option.values limit: 8 %}
+        {% assign preview = value.variant.featured_image | default: swatch_product.featured_image %}
+        <button type="button" class="swatch" data-swatch aria-pressed="false"
+          data-url="{{ value.variant.url | default: swatch_product.url }}"
+          {% if preview %}data-image="{{ preview | image_url: width: 1000 }}" data-srcset="{{ preview | image_url: width: 360 }} 360w, {{ preview | image_url: width: 720 }} 720w, {{ preview | image_url: width: 1000 }} 1000w" data-alt="{{ preview.alt | default: swatch_product.title | escape }}"{% endif %}>
+          <span class="swatch-dot" {% if value.swatch.color %}style="--swatch-color: rgb({{ value.swatch.color.rgb }})"{% endif %}>
+            {% if value.swatch.image %}{{ value.swatch.image | image_url: width: 64 | image_tag: widths: '32,64', sizes: '18px', loading: 'lazy', alt: '' }}{% endif %}
+          </span>
+          {{ value.name | escape }}
+        </button>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endfor %}

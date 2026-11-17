@@ -1,0 +1,18 @@
+<section class="container section-space product-main">
+  <div>
+    {% for image in product.images %}
+      {% if forloop.first %}{{ image | image_url: width: 1800 | image_tag: widths: '360,540,750,1000,1400,1800', sizes: '(min-width: 900px) 55vw, 100vw', loading: 'eager', fetchpriority: 'high' }}
+      {% else %}{{ image | image_url: width: 1400 | image_tag: widths: '360,540,750,1000,1400', sizes: '(min-width: 900px) 55vw, 100vw', loading: 'lazy' }}{% endif %}
+    {% endfor %}
+  </div>
+  <div><h1>{{ product.title | escape }}</h1>
+    {% render 'price', price_product: product %}
+    {% render 'product-form', product: product, context_id: section.id %}
+    <div>{{ product.description }}</div>
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+  </div>
+</section>
+<script type="application/ld+json">{{ product | structured_data }}</script>
+{% schema %}
+{"name":"Main product","settings":[],"blocks":[{"type":"@app"}]}
+{% endschema %}
