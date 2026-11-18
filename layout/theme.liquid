@@ -7,13 +7,15 @@
     <title>{{ page_title | escape }}{% unless page_title contains shop.name %} — {{ shop.name | escape }}{% endunless %}</title>
     {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'announcement-bar.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'announcement-bar.js' | asset_url }}" defer="defer"></script>
     {% render 'css-variables' %}
     {{ content_for_header }}
     <script type="module" src="{{ 'theme.js' | asset_url }}"></script>
   </head>
   <body>
     <a class="skip-link" href="#MainContent">{{ 'general.skip' | t }}</a>
-    {% sections 'header-group' %}
+    <div class="site-header-group">{% sections 'header-group' %}</div>
     <main id="MainContent" tabindex="-1">{{ content_for_layout }}</main>
     {% sections 'footer-group' %}
     {% section 'cart-drawer' %}

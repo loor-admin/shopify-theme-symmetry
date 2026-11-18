@@ -1,1 +1,29 @@
-{"type":"header","name":"Header group","sections":{"header":{"type":"header-beatnik","settings":{}}},"order":["header"]}
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "welcome": {
+          "type": "announcement",
+          "settings": {
+            "message": "Considered pieces. Everyday stories."
+          }
+        }
+      },
+      "block_order": [
+        "welcome"
+      ],
+      "settings": {}
+    },
+    "header": {
+      "type": "header-beatnik",
+      "settings": {}
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

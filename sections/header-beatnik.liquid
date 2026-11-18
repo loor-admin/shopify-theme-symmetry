@@ -1,7 +1,4 @@
 <beatnik-header data-sticky="{{ section.settings.sticky }}" class="header--{{ section.settings.alignment }}">
-  {% if section.settings.announcement != blank %}
-    <p class="announcement">{% if section.settings.announcement_link != blank %}<a href="{{ section.settings.announcement_link }}">{% endif %}{{ section.settings.announcement | escape }}{% if section.settings.announcement_link != blank %}</a>{% endif %}</p>
-  {% endif %}
   <header class="container header-row">
     <a class="brand" href="{{ routes.root_url }}" style="--logo-width: {{ section.settings.logo_width }}px">
       {% if section.settings.logo != blank %}
@@ -73,8 +70,7 @@
     {"type":"link_list","id":"menu","label":"Main menu","default":"main-menu"},
     {"type":"select","id":"alignment","label":"Navigation alignment","options":[{"value":"center","label":"Centered"},{"value":"left","label":"Left"}],"default":"center"},
     {"type":"checkbox","id":"sticky","label":"Reveal on scroll up","default":true},
-    {"type":"text","id":"announcement","label":"Announcement","default":"Considered pieces. Everyday stories."},
-    {"type":"url","id":"announcement_link","label":"Announcement link"}
+    {"type":"paragraph","content":"Manage announcement messages in the Announcement bar section above this header."}
   ],
   "blocks": [
     {"type":"mega_menu","name":"Extra menu column","limit":6,"settings":[

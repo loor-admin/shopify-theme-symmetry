@@ -1,15 +1,20 @@
 {
-  "name":"loor-editorial-theme",
-  "version":"0.1.0",
-  "private":true,
-  "type":"module",
-  "engines":{"node":">=22.12.0"},
-  "scripts":{
-    "check:structure":"node scripts/validate.mjs",
-    "check:theme":"shopify theme check --fail-level warning",
-    "check:cart":"node --test scripts/cart.test.mjs",
-    "check":"npm run check:structure && npm run check:cart && npm run check:theme",
-    "dev":"shopify theme dev"
+  "name": "loor-editorial-theme",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
   },
-  "devDependencies":{"@shopify/cli":"5.0.0"}
+  "scripts": {
+    "check:structure": "node scripts/validate.mjs",
+    "check:theme": "shopify theme check --fail-level warning",
+    "check:cart": "node --test scripts/cart.test.mjs",
+    "check": "npm run check:structure && npm run check:cart && npm run check:announcement && npm run check:theme",
+    "dev": "shopify theme dev",
+    "check:announcement": "node --test scripts/announcement-bar.test.mjs"
+  },
+  "devDependencies": {
+    "@shopify/cli": "5.0.0"
+  }
 }

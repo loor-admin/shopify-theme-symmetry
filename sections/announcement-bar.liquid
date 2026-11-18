@@ -1,0 +1,380 @@
+{% if section.blocks.size > 0 or request.design_mode %}
+  <announcement-bar
+    data-section-id="{{ section.id }}" data-sticky="{{ section.settings.sticky }}"
+    data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.speed }}"
+    data-pause-hover="{{ section.settings.pause_hover }}"
+    style="--ab-background: {{ section.settings.background }}; --ab-text: {{ section.settings.text_color }}; --ab-hover: {{ section.settings.hover_color }}; --ab-border: {% if section.settings.show_border %}{{ section.settings.border_color }}{% else %}transparent{% endif %}; --ab-font-size: {{ section.settings.font_size }}px;"
+    class="ab ab--{{ section.settings.width }} ab--{{ section.settings.padding }}"
+    role="region" aria-label="{{ 'announcement.label' | t }}"
+  >
+    <div class="ab__grid">
+      <div class="ab__utility ab__utility--left">{% render 'announcement-utility', section: section, side: 'left' %}</div>
+      <div class="ab__slider">
+        <button class="ab__control" type="button" data-previous aria-label="{{ 'general.previous' | t }}" aria-controls="AnnouncementTrack-{{ section.id }}" {% unless section.settings.show_arrows %}hidden{% endunless %}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <div class="ab__track" id="AnnouncementTrack-{{ section.id }}">
+          {% for block in section.blocks %}
+            {% liquid
+              assign has_modal = false
+              if block.settings.modal_content != blank or block.settings.modal_page != blank
+                assign has_modal = true
+              endif
+              assign has_inline_link = false
+              if block.settings.message contains '<a '
+                assign has_inline_link = true
+              endif
+            %}
+            <div class="ab__slide{% if forloop.first %} is-active{% endif %}" data-slide data-block-id="{{ block.id }}"
+              {% if block.settings.countdown %}data-end="{{ block.settings.end_time | escape }}" data-offset="{{ block.settings.utc_offset | escape }}" data-expired-behavior="{{ block.settings.expired_behavior }}"{% endif %}
+              {% unless forloop.first %}inert aria-hidden="true"{% endunless %} {{ block.shopify_attributes }}>
+              <div class="ab__message" data-message>
+                {% if block.settings.link != blank and has_inline_link == false and has_modal == false %}
+                  <a href="{{ block.settings.link }}">{{ block.settings.message }}</a>
+                {% else %}
+                  <span>{{ block.settings.message }}</span>
+                {% endif %}
+                {% if block.settings.countdown %}
+                  <span class="ab__countdown" data-countdown role="timer" aria-live="off" aria-label="{{ 'announcement.time_remaining' | t }}"><span class="ab__digits" data-digits>00 : 00 : 00 : 00</span><span class="ab__sr"> {{ 'announcement.timer_units' | t }}</span></span>
+                {% endif %}
+                {% if has_modal %}
+                  <a href="#AnnouncementDetails-{{ block.id }}" data-dialog-open="AnnouncementDetails-{{ block.id }}" aria-haspopup="dialog">{{ 'announcement.details' | t }}</a>
+                {% endif %}
+                {% if block.settings.link != blank %}
+                  {% if has_inline_link or has_modal %}<a href="{{ block.settings.link }}">{{ block.settings.cta | escape }}</a>{% endif %}
+                {% endif %}
+              </div>
+              <span class="ab__expired" data-expired-text>{{ block.settings.expired_text | escape }}</span>
+            </div>
+          {% endfor %}
+        </div>
+        <button class="ab__control" type="button" data-next aria-label="{{ 'general.next' | t }}" aria-controls="AnnouncementTrack-{{ section.id }}" {% unless section.settings.show_arrows %}hidden{% endunless %}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        {% if section.settings.autoplay %}<button class="ab__control ab__play" type="button" data-play aria-pressed="false"><span data-play-label>{{ 'announcement.pause' | t }}</span><span hidden data-resume-label>{{ 'announcement.resume' | t }}</span></button>{% endif %}
+      </div>
+      <div class="ab__utility ab__utility--right">{% render 'announcement-utility', section: section, side: 'right' %}</div>
+    </div>
+    <span class="ab__sr" data-status aria-live="polite" aria-atomic="true"></span>
+    {% for block in section.blocks %}
+      {% if block.settings.modal_content != blank or block.settings.modal_page != blank %}
+        <dialog class="ab__dialog" id="AnnouncementDetails-{{ block.id }}" aria-labelledby="AnnouncementTitle-{{ block.id }}">
+          <div class="ab__dialog-heading"><h2 id="AnnouncementTitle-{{ block.id }}">{{ block.settings.modal_title | escape }}</h2><form method="dialog"><button type="submit" autofocus>{{ 'general.close' | t }}</button></form></div>
+          <a class="ab__fallback-close" href="#AnnouncementTrack-{{ section.id }}">{{ 'general.close' | t }}</a>
+          <div class="ab__dialog-content">{% if block.settings.modal_page != blank %}{{ block.settings.modal_page.content }}{% else %}{{ block.settings.modal_content }}{% endif %}</div>
+        </dialog>
+      {% endif %}
+    {% endfor %}
+  </announcement-bar>
+{% endif %}
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": "section",
+  "class": "announcement-section",
+  "limit": 1,
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#F9F6F0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "hover_color",
+      "label": "Link hover accent",
+      "default": "#89432F"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bottom border",
+      "default": "#E5E0D8"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show bottom border",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Content width",
+      "options": [
+        {
+          "value": "full",
+          "label": "Full width"
+        },
+        {
+          "value": "container",
+          "label": "Container (1440px)"
+        }
+      ],
+      "default": "container"
+    },
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "Vertical padding",
+      "options": [
+        {
+          "value": "compact",
+          "label": "Compact"
+        },
+        {
+          "value": "standard",
+          "label": "Standard"
+        }
+      ],
+      "default": "compact"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 13,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "sticky",
+      "label": "Sticky behavior",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "header",
+          "label": "Sticky with header"
+        }
+      ],
+      "default": "header"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show previous and next arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Rotation interval",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "select",
+      "id": "left_slot",
+      "label": "Left utility slot",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "social",
+          "label": "Social icons"
+        },
+        {
+          "value": "menu",
+          "label": "Utility menu"
+        },
+        {
+          "value": "localization",
+          "label": "Country and language"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "link_list",
+      "id": "left_menu",
+      "label": "Left utility menu"
+    },
+    {
+      "type": "select",
+      "id": "right_slot",
+      "label": "Right utility slot",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "social",
+          "label": "Social icons"
+        },
+        {
+          "value": "menu",
+          "label": "Utility menu"
+        },
+        {
+          "value": "localization",
+          "label": "Country and language"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "link_list",
+      "id": "right_menu",
+      "label": "Right utility menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country",
+      "label": "Show country / currency",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "Show language",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "youtube",
+      "label": "Youtube URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "message",
+          "label": "Announcement",
+          "default": "Considered pieces. Everyday stories."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Message link",
+          "info": "With inline links or modal details, this becomes a separate call to action."
+        },
+        {
+          "type": "text",
+          "id": "cta",
+          "label": "Link label",
+          "default": "Shop now"
+        },
+        {
+          "type": "checkbox",
+          "id": "countdown",
+          "label": "Enable countdown",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "end_time",
+          "label": "End date and time",
+          "info": "YYYY-MM-DD HH:MM, using the UTC offset below."
+        },
+        {
+          "type": "text",
+          "id": "utc_offset",
+          "label": "UTC offset",
+          "default": "+00:00",
+          "info": "Use +00:00 for UTC, -06:00 for CST or -05:00 for CDT. Fixed offset at the target date; daylight saving is not inferred."
+        },
+        {
+          "type": "select",
+          "id": "expired_behavior",
+          "label": "When countdown expires",
+          "options": [
+            {
+              "value": "hide",
+              "label": "Hide announcement"
+            },
+            {
+              "value": "text",
+              "label": "Show expired text"
+            }
+          ],
+          "default": "text"
+        },
+        {
+          "type": "text",
+          "id": "expired_text",
+          "label": "Expired text",
+          "default": "This offer has ended."
+        },
+        {
+          "type": "text",
+          "id": "modal_title",
+          "label": "Details title",
+          "default": "Announcement details"
+        },
+        {
+          "type": "richtext",
+          "id": "modal_content",
+          "label": "Details content"
+        },
+        {
+          "type": "page",
+          "id": "modal_page",
+          "label": "Details page",
+          "info": "Page content takes priority over details content."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [
+        {
+          "type": "announcement"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
