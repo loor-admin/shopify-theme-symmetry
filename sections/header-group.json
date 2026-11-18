@@ -61,29 +61,12 @@
             "modal_content": "",
             "modal_page": ""
           }
-        },
-        "welcome": {
-          "type": "announcement",
-          "settings": {
-            "message": "Considered pieces. Everyday stories.",
-            "link": "",
-            "cta": "Shop now",
-            "countdown": false,
-            "end_time": "",
-            "utc_offset": "+00:00",
-            "expired_behavior": "text",
-            "expired_text": "This offer has ended.",
-            "modal_title": "Announcement details",
-            "modal_content": "",
-            "modal_page": ""
-          }
         }
       },
       "block_order": [
         "announcement_mKPBB9",
         "announcement_txVfmP",
-        "announcement_qnrWBf",
-        "welcome"
+        "announcement_qnrWBf"
       ],
       "settings": {
         "background": "#f9f6f0",
