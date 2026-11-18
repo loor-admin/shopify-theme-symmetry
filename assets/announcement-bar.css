@@ -29,7 +29,6 @@
 .ab__control, .ab__dialog button { border: 0; color: inherit; background: transparent; padding: 6px; min-width: 32px; min-height: 32px; display: inline-flex; align-items: center; justify-content: center; }
 .ab__control { flex-shrink: 0; visibility: hidden; }
 .ab[data-enhanced][data-multiple] .ab__control { visibility: visible; }
-.ab__play { font-size: 11px; letter-spacing: 0; }
 .ab__links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; list-style: none; margin: 0; padding: 0; }
 .ab__links a { display: inline-flex; align-items: center; min-height: 32px; }
 .ab__social a { min-width: 32px; justify-content: center; }

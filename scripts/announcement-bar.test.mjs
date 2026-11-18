@@ -79,7 +79,7 @@ test('pause reasons compose and rotation resumes only after the last reason is c
   assert.equal(timers.size, 0);
   bar.setPause('focus', false);
   assert.equal(timers.size, 1);
-  bar.setPause('user', true);
+  bar.setPause('motion', true);
   bar.setPause('dialog', true);
   bar.setPause('dialog', false);
   assert.equal(timers.size, 0);

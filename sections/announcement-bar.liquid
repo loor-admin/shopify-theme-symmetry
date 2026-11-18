@@ -51,7 +51,6 @@
         <button class="ab__control" type="button" data-next aria-label="{{ 'general.next' | t }}" aria-controls="AnnouncementTrack-{{ section.id }}" {% unless section.settings.show_arrows %}hidden{% endunless %}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="1.5"/></svg>
         </button>
-        {% if section.settings.autoplay %}<button class="ab__control ab__play" type="button" data-play aria-pressed="false"><span data-play-label>{{ 'announcement.pause' | t }}</span><span hidden data-resume-label>{{ 'announcement.resume' | t }}</span></button>{% endif %}
       </div>
       <div class="ab__utility ab__utility--right">{% render 'announcement-utility', section: section, side: 'right' %}</div>
     </div>

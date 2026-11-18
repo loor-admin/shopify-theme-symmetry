@@ -9,7 +9,6 @@ class AnnouncementBar extends HTMLElement {
     this.reasons = new Set();
     this.motion = matchMedia('(prefers-reduced-motion: reduce)');
     this.status = this.querySelector('[data-status]');
-    this.play = this.querySelector('[data-play]');
     this.editorBlock = null;
     this.countdowns = this.slides.filter(slide => slide.dataset.end !== undefined).map(slide => ({ slide, end: AnnouncementBar.parseEnd(slide.dataset.end, slide.dataset.offset) }));
     this.setAttribute('data-enhanced', '');
@@ -26,11 +25,7 @@ class AnnouncementBar extends HTMLElement {
         this.setPause('dialog', true);
       } else if (event.target.closest('[data-previous]')) this.step(-1, true);
       else if (event.target.closest('[data-next]')) this.step(1, true);
-      else if (event.target.closest('[data-play]')) {
-        const paused = !this.reasons.has('user');
-        this.setPause('user', paused);
-        this.updatePlay();
-      } else if (event.target instanceof HTMLDialogElement) {
+      else if (event.target instanceof HTMLDialogElement) {
         const bounds = event.target.getBoundingClientRect();
         if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) event.target.close();
       }
@@ -73,8 +68,7 @@ class AnnouncementBar extends HTMLElement {
     }, { signal });
     document.addEventListener('visibilitychange', () => this.setPause('hidden', document.hidden), { signal });
     this.motion.addEventListener('change', () => {
-      if (this.motion.matches) this.setPause('user', true);
-      this.updatePlay();
+      this.setPause('motion', this.motion.matches);
     }, { signal });
     document.addEventListener('shopify:block:select', event => {
       if (event.detail?.sectionId !== this.dataset.sectionId && !this.contains(event.target)) return;
@@ -93,8 +87,7 @@ class AnnouncementBar extends HTMLElement {
     this.resize = new ResizeObserver(() => this.measure());
     this.resize.observe(this);
     this.setPause('hidden', document.hidden);
-    if (this.motion.matches) this.reasons.add('user');
-    this.updatePlay();
+    this.setPause('motion', this.motion.matches);
     this.tick();
     this.measure();
     this.schedule();
@@ -147,14 +140,6 @@ class AnnouncementBar extends HTMLElement {
     this.schedule();
   }
 
-  updatePlay() {
-    if (!this.play) return;
-    const paused = this.reasons.has('user');
-    this.play.setAttribute('aria-pressed', String(paused));
-    this.play.querySelector('[data-play-label]').hidden = paused;
-    this.play.querySelector('[data-resume-label]').hidden = !paused;
-  }
-
   schedule() {
     clearTimeout(this.rotation);
     if (this.dataset.autoplay !== 'true' || this.reasons.size || this.available().length < 2) return;
@@ -195,7 +180,7 @@ class AnnouncementBar extends HTMLElement {
     const availabilityChanged = this.availableCount !== available.length;
     this.availableCount = available.length;
     this.toggleAttribute('data-multiple', available.length > 1);
-    this.querySelectorAll('[data-previous], [data-next], [data-play]').forEach(control => {
+    this.querySelectorAll('[data-previous], [data-next]').forEach(control => {
       control.disabled = available.length < 2;
     });
     if (!available.includes(this.slides[this.index])) {
