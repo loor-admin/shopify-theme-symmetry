@@ -124,3 +124,17 @@ test('disconnect cancels rotation and ticking timers and releases observers/list
   assert.equal(timers.size, 0);
   assert.ok(aborted && disconnected);
 });
+
+
+test('announcement schema uses valid range controls and string-valued font-size options', async () => {
+  const liquid = await readFile(new URL('../sections/announcement-bar.liquid', import.meta.url), 'utf8');
+  const schema = JSON.parse(liquid.match(/{% schema %}([\s\S]*?){% endschema %}/)[1]);
+  const settings = [...schema.settings, ...schema.blocks.flatMap(block => block.settings)];
+  for (const setting of settings.filter(setting => setting.type === 'range')) {
+    assert.ok((setting.max - setting.min) / setting.step >= 2, `${setting.id} must offer at least three values`);
+  }
+  const font = schema.settings.find(setting => setting.id === 'font_size');
+  assert.equal(font.type, 'select');
+  assert.deepEqual(font.options.map(option => option.value), ['12', '13']);
+  assert.ok(font.options.some(option => option.value === font.default));
+});
