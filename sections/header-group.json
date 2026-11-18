@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "Header group",
@@ -5,36 +14,93 @@
     "announcement": {
       "type": "announcement-bar",
       "blocks": {
-        "welcome": {
+        "announcement_mKPBB9": {
           "type": "announcement",
           "settings": {
-            "message": "Considered pieces. Everyday stories."
+            "message": "&nbsp;Order before 7pm for <a href=\"#\" title=\"FAQs\">Next Day Delivery.</a>&nbsp;",
+            "link": "",
+            "cta": "Shop now",
+            "countdown": false,
+            "end_time": "",
+            "utc_offset": "+00:00",
+            "expired_behavior": "text",
+            "expired_text": "This offer has ended.",
+            "modal_title": "Announcement details",
+            "modal_content": "",
+            "modal_page": ""
+          }
+        },
+        "announcement_txVfmP": {
+          "type": "announcement",
+          "settings": {
+            "message": "&nbsp;Distinct design. Shop our <a href=\"#\" title=\"Best Sellers\">favorites</a>.&nbsp;",
+            "link": "",
+            "cta": "Shop now",
+            "countdown": false,
+            "end_time": "",
+            "utc_offset": "+00:00",
+            "expired_behavior": "hide",
+            "expired_text": "This offer has ended.",
+            "modal_title": "Announcement details",
+            "modal_content": "",
+            "modal_page": ""
+          }
+        },
+        "announcement_qnrWBf": {
+          "type": "announcement",
+          "settings": {
+            "message": "&nbsp;Up to 20% off. <a href=\"#\" title=\"Sale\">Shop the sale.</a>&nbsp;",
+            "link": "",
+            "cta": "Shop now",
+            "countdown": true,
+            "end_time": "2026-11-17 23:00",
+            "utc_offset": "-06:00",
+            "expired_behavior": "hide",
+            "expired_text": "This offer has ended.",
+            "modal_title": "Announcement details",
+            "modal_content": "",
+            "modal_page": ""
           }
         }
       },
       "block_order": [
-        "welcome"
+        "announcement_mKPBB9",
+        "announcement_txVfmP",
+        "announcement_qnrWBf"
       ],
       "settings": {
-        "background": "#F9F6F0",
-        "text_color": "#1A1A1A",
-        "hover_color": "#89432F",
+        "background": "#f9f6f0",
+        "text_color": "#1a1a1a",
+        "hover_color": "#89432f",
+        "border_color": "#e5e0d8",
         "show_border": true,
-        "border_color": "#E5E0D8",
         "width": "container",
         "padding": "compact",
         "font_size": "12",
         "sticky": "header",
         "autoplay": true,
-        "speed": 5,
-        "show_arrows": true,
-        "pause_hover": true
-      },
-      "disabled": false
+        "show_arrows": false,
+        "pause_hover": true,
+        "speed": 3,
+        "left_slot": "none",
+        "left_menu": "",
+        "right_slot": "none",
+        "right_menu": "",
+        "show_country": true,
+        "show_language": true,
+        "instagram": "",
+        "facebook": "",
+        "youtube": ""
+      }
     },
     "header": {
       "type": "header-beatnik",
-      "settings": {}
+      "settings": {
+        "logo_width": 160,
+        "menu": "main-menu",
+        "alignment": "center",
+        "sticky": true
+      }
     }
   },
   "order": [
