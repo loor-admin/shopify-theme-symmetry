@@ -138,3 +138,20 @@ test('announcement schema uses valid range controls and string-valued font-size 
   assert.deepEqual(font.options.map(option => option.value), ['12', '13']);
   assert.ok(font.options.some(option => option.value === font.default));
 });
+
+
+test('header group enables the announcement bar before the header with a visible initial message', async () => {
+  const group = JSON.parse(await readFile(new URL('../sections/header-group.json', import.meta.url), 'utf8'));
+  const announcementId = group.order.find(id => group.sections[id].type === 'announcement-bar');
+  const headerId = group.order.find(id => group.sections[id].type === 'header-beatnik');
+  assert.ok(announcementId && headerId);
+  assert.equal(group.order.indexOf(announcementId) + 1, group.order.indexOf(headerId));
+  const section = group.sections[announcementId];
+  assert.equal(section.disabled, false);
+  assert.ok(section.blocks[section.block_order[0]].settings.message.trim());
+  assert.notEqual(section.settings.background, section.settings.text_color);
+  const layout = await readFile(new URL('../layout/theme.liquid', import.meta.url), 'utf8');
+  assert.ok(layout.includes("{% sections 'header-group' %}"));
+  assert.ok(layout.includes("'announcement-bar.css' | asset_url"));
+  assert.ok(layout.includes("'announcement-bar.js' | asset_url"));
+});

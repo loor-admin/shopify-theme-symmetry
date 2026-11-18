@@ -15,7 +15,22 @@
       "block_order": [
         "welcome"
       ],
-      "settings": {}
+      "settings": {
+        "background": "#F9F6F0",
+        "text_color": "#1A1A1A",
+        "hover_color": "#89432F",
+        "show_border": true,
+        "border_color": "#E5E0D8",
+        "width": "container",
+        "padding": "compact",
+        "font_size": "12",
+        "sticky": "header",
+        "autoplay": true,
+        "speed": 5,
+        "show_arrows": true,
+        "pause_hover": true
+      },
+      "disabled": false
     },
     "header": {
       "type": "header-beatnik",
